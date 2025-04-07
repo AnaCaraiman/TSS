@@ -1,4 +1,11 @@
 # TSS – Tema T5: Testare unitară în PHP
+
+## Contextul și importanța testării unitare
+
+Testarea unitară în PHP este o practică esențială în dezvoltarea modernă de aplicații web. Ea presupune scrierea de teste automate pentru metodele și clasele individuale, asigurând funcționalitatea lor corectă.
+
+Framework-ul cel mai folosit este **PHPUnit**, un instrument puternic, stabil și bine integrat în ecosistemul PHP.
+
 ---
 
 ## Studii și articole de referință
