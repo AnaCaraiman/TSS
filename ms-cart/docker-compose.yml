@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ms-cart
+        volumes:
+            - ./:/var/www
+        networks:
+            - ms_cart_network
+            - microservices_network
+        depends_on:
+            mysql:
+                condition: service_healthy
+        env_file:
+            - .env
+
+    nginx:
+        image: nginx:alpine
+        container_name: ms-cart-nginx
+        ports:
+            - "8083:83"
+        volumes:
+            - ./:/var/www
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        networks:
+            - ms_cart_network
+            - microservices_network
+        depends_on:
+            - app
+
+    mysql:
+        image: mysql:8.0
+        container_name: ms-cart-mysql
+        environment:
+            MYSQL_DATABASE: ms_cart_db
+            MYSQL_ROOT_PASSWORD: TVwDQCGIU4huuUB
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - ms_cart_network
+        healthcheck:
+            test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}" ]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+
+    redis:
+        image: redis:alpine
+        container_name: ms-cart-redis
+        networks:
+            - ms_cart_network
+        ports:
+            - "6383:6383"
+
+networks:
+    ms_cart_network:
+        driver: bridge
+    microservices_network:
+        external: true
+
+volumes:
+    mysql_data:

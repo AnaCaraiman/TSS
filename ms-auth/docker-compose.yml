@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ms-auth
+        volumes:
+            - ./:/var/www
+        networks:
+            - ms_auth_network
+            - microservices_network
+        depends_on:
+            mysql:
+                condition: service_healthy
+        env_file:
+            - .env
+
+    nginx:
+        image: nginx:alpine
+        container_name: ms-auth-nginx
+        ports:
+            - "8079:79"
+        volumes:
+            - ./:/var/www
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        networks:
+            - ms_auth_network
+            - microservices_network
+
+        depends_on:
+            - app
+
+    redis:
+        image: redis:alpine
+        container_name: ms-auth-redis
+        networks:
+            - ms_auth_network
+        ports:
+            - "6379:6379"
+
+    mysql:
+        image: mysql:8.0
+        container_name: ms-auth-mysql
+        environment:
+            MYSQL_DATABASE: ms_auth_db
+            MYSQL_ROOT_PASSWORD: TVwDQCGIU4huuUB
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - ms_auth_network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+
+volumes:
+    mysql_data:
+
+networks:
+    ms_auth_network:
+        driver: bridge
+    microservices_network:
+        external: true

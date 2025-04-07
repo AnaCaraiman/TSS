@@ -1,0 +1,27 @@
+<?php
+
+namespace App\Http\Resources\Auth;
+
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
+use Symfony\Component\HttpFoundation\Cookie;
+
+class AuthRegisterResource
+{
+    public static function invalidData(Collection $errors): JsonResponse
+    {
+        return response()->json([
+            'message' => 'Invalid data.',
+            'errors' => $errors->toArray(),
+        ], 401);
+    }
+
+    public static function success(array $user, string $accessToken, Cookie $cookie): JsonResponse
+    {
+        return response()->json([
+            'user' => $user,
+            'accessToken' => $accessToken,
+            'message' => 'Account created successfully.',
+        ], 201)->withCookie($cookie);
+    }
+}
