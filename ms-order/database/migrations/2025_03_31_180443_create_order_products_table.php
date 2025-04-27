@@ -14,10 +14,12 @@ return new class extends Migration
         Schema::create('order_product', function (Blueprint $table) {
             $table->id();
             $table->foreignId('order_id')->constrained()->onDelete('cascade');
-            $table->foreignId('product_id')->constrained()->onDelete('cascade');
+            $table->foreignId('product_id')->nullable(); // optional if syncing locally
+            $table->unsignedBigInteger('external_product_id'); // your real external ID
             $table->integer('quantity');
             $table->timestamps();
         });
+
     }
 
     /**

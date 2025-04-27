@@ -73,4 +73,14 @@ class ProductController extends Controller
         }
     }
 
+    public function getProductsByIds(Request $request): JsonResponse {
+        $ids = (array) $request->input('ids');
+        $products = $this->productService->getProductsByIds($ids);
+
+        return response()->json([
+            'message' => 'Products retrieved successfully',
+            'products' => $products
+        ],201);
+    }
+
 }

@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\Product;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class ProductRepository
@@ -55,6 +56,10 @@ class ProductRepository
 
         $product->stock_quantity = max(0, $product->stock_quantity - $quantity);
         return $product->save();
+    }
+
+    public function getProductsByIds(array $ids): Collection {
+        return Product::with(['category', 'images', 'attributes'])->whereIn('id', $ids)->get();
     }
 
 

@@ -33,11 +33,14 @@ class OrderController
         }
     }
 
-    public function getOrders(Request $request): JsonResponse {
-        $userId = $request->all()['user_id'];
-        Log::info($userId);
+    public function getOrders(Request $request): JsonResponse
+    {
+        $userId = $request->query('user_id');
         $page = $request->query('page', 1);
-        $orders = $this->orderService->getOrders($userId,$page);
+
+        Log::info("Fetching orders for user_id: $userId, page: $page");
+
+        $orders = $this->orderService->getOrders((int) $userId, (int) $page);
 
         return response()->json([
             'message' => 'User orders retrieved successfully',
@@ -49,8 +52,9 @@ class OrderController
                 'per_page' => $orders->perPage(),
                 'total' => $orders->total(),
             ]
-        ],201);
+        ]);
     }
+
 
     public function getOrder(Request $request): JsonResponse {
         try {

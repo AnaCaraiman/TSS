@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  ms-ai-recommendation:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ms-ai-recommendation
+    ports:
+      - "8088:8088"
+    volumes:
+      - .:/app
+    networks:
+      - microservices_network
+    restart: unless-stopped
+
+networks:
+  microservices_network:
+    external: true

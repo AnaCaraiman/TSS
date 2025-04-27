@@ -3,9 +3,11 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\FavoriteController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RecommendationController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function () {
@@ -15,6 +17,8 @@ Route::prefix('auth')->group(function () {
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     Route::post('refresh', [AuthController::class, 'refresh'])->name('refresh');
     Route::delete('/', [AuthController::class, 'deleteAccount'])->name('delete');
+    Route::post('/profilePicture', [AuthController::class, 'uploadProfilePicture'])->name('profilePicture');
+    Route::put('/',[AuthController::class, 'changePassword'])->name('changePassword');
 });
 
 Route::prefix('product')->group(function () {
@@ -45,6 +49,16 @@ Route::prefix('payment')->group(function () {
     Route::post('/',[PaymentController::class,'makePayment']);
 });
 
+Route::prefix('favorite')->group(function () {
+    Route::get('/', [FavoriteController::class, 'getFavorites']);
+    Route::post('/',[FavoriteController::class,'addToFavorite']);
+    Route::delete('/{id}',[FavoriteController::class,'removeFromFavorite']);
+});
+
+Route::prefix('recommendation')->group(function () {
+    Route::get('/', [RecommendationController::class, 'getRecommendedProducts']);
+    Route::post('/',[RecommendationController::class,'addAction']);
+});
 
 
 

@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        container_name: ms-recommendation
+        volumes:
+            - ./:/var/www
+        networks:
+            - ms_recommendation_network
+            - microservices_network
+        depends_on:
+            mysql:
+                condition: service_healthy
+        env_file:
+            - .env
+
+    nginx:
+        image: nginx:alpine
+        container_name: ms-recommendation-nginx
+        ports:
+            - "8087:87"
+        volumes:
+            - ./:/var/www
+            - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        networks:
+            - ms_recommendation_network
+            - microservices_network
+
+        depends_on:
+            - app
+
+    redis:
+        image: redis:alpine
+        container_name: ms-recommendation-redis
+        networks:
+            - ms_recommendation_network
+        ports:
+            - "6387:6387"
+
+    mysql:
+        image: mysql:8.0
+        container_name: ms-recommendation-mysql
+        environment:
+            MYSQL_DATABASE: ms_recommendation_db
+            MYSQL_ROOT_PASSWORD: TVwDQCGIU4huuUB
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - ms_recommendation_network
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-p${DB_PASSWORD}"]
+            interval: 30s
+            timeout: 10s
+            retries: 5
+
+volumes:
+    mysql_data:
+
+networks:
+    ms_recommendation_network:
+        driver: bridge
+    microservices_network:
+        external: true

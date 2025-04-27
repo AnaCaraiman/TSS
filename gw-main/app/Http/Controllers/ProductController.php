@@ -47,6 +47,14 @@ class ProductController
         );
     }
 
+    public function getProductsByIds(array $ids): JsonResponse
+    {
+        $response = Http::get($this->productServiceUrl . '/api/ms-product/productsbyids', ['ids' => $ids]);
+        return response()->json(
+            json_decode($response->getBody()->getContents(), true)
+        );
+    }
+
 
 
 

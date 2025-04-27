@@ -28,6 +28,7 @@ Route::prefix('ms-product')->group(function () {
 
    Route::post('/',[ProductController::class,'createProduct']);
    Route::get('/',[ProductController::class,'getProducts']);
+   Route::get('/productsbyids',[ProductController::class,'getProductsByIds']);
    Route::get('/{id}',[ProductController::class,'getProduct']);
    Route::delete('/{id}',[ProductController::class,'removeProduct']);
 });

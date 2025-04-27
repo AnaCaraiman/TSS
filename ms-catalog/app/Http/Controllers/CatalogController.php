@@ -29,6 +29,14 @@ class CatalogController extends Controller
 
             $filteredProducts = $this->catalogService->filterProducts($products, $filters);
 
+            $availableBrands = $filteredProducts->pluck('brand')->unique()->values();
+            $availableCategories = $filteredProducts->pluck('category')->unique('id')->map(function ($category) {
+                return [
+                    'id' => $category['id'],
+                    'name' => $category['name'],
+                ];
+            })->values();
+
             $perPage = $request->query('per_page', 30);
             $page = $request->query('page', 1);
             $total = $filteredProducts->count();
@@ -50,6 +58,10 @@ class CatalogController extends Controller
                     'per_page' => $perPage,
                     'current_page' => $paginatedProducts->currentPage(),
                     'total_pages' => $paginatedProducts->lastPage(),
+                ],
+                'filters' => [
+                    'brands' => $availableBrands,
+                    'categories' => $availableCategories,
                 ]
             ]);
 

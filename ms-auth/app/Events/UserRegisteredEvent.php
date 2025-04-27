@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
@@ -9,10 +10,10 @@ class UserRegisteredEvent
 {
     use Dispatchable, SerializesModels;
 
-    public int $userId;
+    public User $user;
 
-    public function __construct($userId)
+    public function __construct($user)
     {
-        $this->userId = $userId;
+        $this->user = $user;
     }
 }

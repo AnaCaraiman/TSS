@@ -14,7 +14,9 @@ class ProductAttributeService
      */
     public function createAttribute(int $productId, $attributeData): void
     {
-        if(!$this->productAttributeRepository->createAttributeForProduct($productId, $attributeData)) {
+        if(empty($attributeData['attribute_name']) ||
+            empty($attributeData['attribute_value']) ||
+            !$this->productAttributeRepository->createAttributeForProduct($productId, $attributeData)) {
             throw new Exception('Attribute not created for product with id ' . $productId);
         }
     }

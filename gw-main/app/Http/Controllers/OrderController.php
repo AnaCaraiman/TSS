@@ -46,7 +46,9 @@ class OrderController
      */
     public function getOrders(Request $request): JsonResponse {
         $userId = $this->authController->getUserId($request);
-        $response = Http::get($this->orderServiceUrl . '/api/ms-order',['user_id' => $userId]);
+        $page = $request->query('page', 1);
+
+        $response = Http::get($this->orderServiceUrl . '/api/ms-order',['user_id' => $userId,'page' => $page]);
         return response()->json(json_decode($response->getBody()->getContents(),true));
     }
 

@@ -39,6 +39,10 @@ return [
         'url' => env('MS_AUTH_URL'),
     ],
 
+    'ms_favorite' => [
+        'url' => env('MS_FAVORITE_URL'),
+    ],
+
     'ms_product' => [
         'url' => env('MS_PRODUCT_URL'),
     ],
@@ -55,6 +59,9 @@ return [
     ],
     'ms_payment' => [
         'url' => env('MS_PAYMENT_URL'),
+    ],
+    'ms_recommendation' => [
+        'url' => env('MS_RECOMMENDATION_URL'),
     ]
 
 

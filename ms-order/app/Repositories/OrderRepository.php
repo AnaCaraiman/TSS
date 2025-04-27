@@ -4,10 +4,8 @@ namespace App\Repositories;
 
 use App\Enums\OrderStatus;
 use App\Models\Order;
-use App\Models\Product;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class OrderRepository
 {
@@ -28,52 +26,55 @@ class OrderRepository
         ]);
 
         foreach ($data['products'] as $productData) {
-            Log::info($productData);
-            $product = Product::firstOrCreate(
-                ['id' => $productData['id']],
-                [
-                    'id' => $productData['id'],
-                    'name' => $productData['name'],
-                    'price' => $productData['price'],
-                    'image_url' => $productData['image_url'] ?? null,
-                    'quantity' => $productData['stock'] ?? 0,
-                ]
-            );
-
-            $order->products()->attach($product->id, [
+            DB::table('order_product')->insert([
+                'order_id' => $order->id,
+                'product_id' => null,
+                'external_product_id' => $productData['id'],
+                'name' => $productData['name'],
+                'price' => $productData['price'],
+                'image_url' => $productData['image_url'] ?? null,
                 'quantity' => $productData['quantity'],
+                'created_at' => now(),
+                'updated_at' => now(),
             ]);
         }
 
-        Log::info("Order created with id $order->id");
 
-        $order->load('products');
-
-        $order->products = $order->products->map(function ($product) {
+        $order->products = collect($data['products'])->map(function ($product) {
             return [
-                'product_id' => $product->pivot->product_id ?? $product->id,
-                'name'       => $product->name,
-                'price'      => $product->price,
-                'image_url'  => $product->image_url,
-                'quantity'   => $product->pivot->quantity,
-                'created_at' => $product->created_at,
-                'updated_at' => $product->updated_at,
+                'product_id' => $product['id'],
+                'name' => $product['name'],
+                'price' => $product['price'],
+                'quantity' => $product['quantity'],
+                'image_url' => $product['image_url'] ?? null,
             ];
         });
 
-        $order->setRelation('products', collect($order->products));
-
         return $order;
-
     }
 
 
-
-    public function getOrdersByUserId(string $userId, int $page = 1, int $perPage = 10): LengthAwarePaginator {
-        return Order::with('products')
-            ->where('user_id', $userId)
+    public function getOrdersByUserId(int $userId, int $page = 1, int $perPage = 10): LengthAwarePaginator
+    {
+        $orders = Order::where('user_id', $userId)
+            ->orderByDesc('created_at')
             ->paginate($perPage, ['*'], 'page', $page);
+
+        $orderIds = $orders->pluck('id')->toArray();
+
+        $productSnapshots = DB::table('order_product')
+            ->whereIn('order_id', $orderIds)
+            ->select('order_id', 'external_product_id as product_id', 'name', 'price', 'quantity', 'image_url')
+            ->get()
+            ->groupBy('order_id');
+
+        foreach ($orders as $order) {
+            $order->products = $productSnapshots->get($order->id)?->values() ?? collect();
+        }
+
+        return $orders;
     }
+
 
     public function getOrderById(string $id): ?Order {
         return Order::with('products')->find($id);
@@ -87,6 +88,8 @@ class OrderRepository
                     'status' => OrderStatus::CANCELED,
                 ]) > 0;
     }
+
+
 
 
 }

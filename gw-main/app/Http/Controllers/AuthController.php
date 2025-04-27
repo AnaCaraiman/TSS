@@ -54,7 +54,7 @@ class AuthController
                 throw new Exception("Unauthorized");
             }
 
-            $response = Http::withToken(trim($accessToken))->post($this->authServiceUrl . '/api/auth/refresh-token', $request->all());
+            $response = Http::withToken(trim($accessToken))->post($this->authServiceUrl . '/api/auth/refresh', $request->all());
             return response()->json(json_decode($response->getBody()->getContents(), true));
         }
         catch (Exception $e) {
@@ -95,6 +95,10 @@ class AuthController
 
     }
 
+    /**
+     * @throws ConnectionException
+     * @throws Exception
+     */
     public function getUserInfo(Request $request): JsonResponse {
         $accessToken = $request->bearerToken();
         if (!$accessToken) {
@@ -102,6 +106,44 @@ class AuthController
         }
         $response = Http::withToken(trim($accessToken))->get($this->authServiceUrl . '/api/auth/userInfo');
         return response()->json(json_decode($response->getBody()->getContents(), true));
+    }
+
+    public function uploadProfilePicture(Request $request): JsonResponse {
+        try {
+            $accessToken = $request->bearerToken();
+            if (!$accessToken) {
+                throw new Exception("Unauthorized");
+            }
+
+            if (!$request->hasFile('profile_picture')) {
+                $response = Http::withToken($accessToken)->post($this->authServiceUrl . '/api/auth/profilePicture');
+                return response()->json($response->json(), $response->status());
+            }
+
+            $file = $request->file('profile_picture');
+
+            $response = Http::withToken($accessToken)->attach('profile_picture', file_get_contents($file), $file->getClientOriginalName())->post($this->authServiceUrl . '/api/auth/profilePicture');
+            return response()->json($response->json(), $response->status());
+
+
+        }
+        catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
+    }
+
+    public function changePassword(Request $request): JsonResponse {
+        try {
+            $accessToken = $request->bearerToken();
+            if (!$accessToken) {
+                throw new Exception("Unauthorized");
+            }
+            $response = Http::withToken(trim($accessToken))->put($this->authServiceUrl . '/api/auth',$request->all());
+            return response()->json(json_decode($response->getBody()->getContents(),true));
+        }
+        catch (Exception $e) {
+            return response()->json(['error' => $e->getMessage()], 400);
+        }
     }
 
 }

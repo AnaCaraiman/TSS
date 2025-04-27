@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ProductRepository;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 
 class ProductService
@@ -63,6 +64,10 @@ class ProductService
         Log::info('in service');
         $this->productRepository->lowerStock($productId, $quantity);
 
+    }
+
+    public function getProductsByIds(array $ids): Collection {
+        return $this->productRepository->getProductsByIds($ids);
     }
 
 
