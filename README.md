@@ -82,18 +82,6 @@ composer require --dev phpunit/phpunit mockery/mockery
 </phpunit>
 ```
 
-### Structură directoare teste
-```
-tests/
-├── Feature/
-│   ├── Auth/RegisterUserTest.php
-│   ├── Auth/LoginUserTest.php
-│   └── Cart/UpdateCartTest.php
-└── Unit/Services/
-    ├── AuthServiceTest.php
-    ├── CartServiceTest.php
-    └── CartItemServiceTest.php
-```
 
 ## Etapa 2 
 
@@ -105,50 +93,149 @@ tests/
 - PHPUnit config cu coverage activ
 
 
-## 2. Analiza funcțională (Partitionare de echivalență)
+## 2. Testarea funcțională
 
-| Test | Domeniu | Clase de echivalență |
-| :--- | :--- | :--- |
-| RegisterUserTest | email, password, phone | valid/invalid email, parola potrivită, prefix corect |
-| LoginUserTest | email, password | email existent/inexistent, parola corectă/greșită |
-| UpdateCartTest | operation, quantity | valid (+/-/remove), invalid |
+## (a) Partiționare de echivalență
 
-## 3. Analiza valorilor de frontieră (Boundary Value Analysis)
+### Domeniul de intrări:
 
-| Parametru | Limite |
-| :--- | :--- |
-| Password | 7 caractere (invalid), 8 caractere (valid) |
-| Quantity | 0 (invalid), 1 (valid) |
-| Email | format valid vs invalid |
+**RegisterUserTest:**
+- `email` → două clase de echivalență:
+  - E1: { email valid }
+  - E2: { email invalid }
+- `password` → două clase:
+  - P1: { parolă validă ≥ 8 caractere }
+  - P2: { parolă invalidă < 8 caractere }
+- `phone_prefix` și `phone_number` → tratate ca:
+  - PP1: { prefix valid }
+  - PP2: { prefix invalid }
 
-## 4. Testarea Structurală
+**LoginUserTest:**
+- `email`, `password`
+  - LE1: { email valid și existent }
+  - LE2: { email valid dar parola greșită }
 
-### a) Acoperire la nivel de instrucțiune
-- Trecere prin toate metodele: `registerUser`, `getTokens`, `createCart`, `addCartItem`
-- Teste pentru fluxuri de succes și eșec
+**UpdateCartTest:**
+- `operation`
+  - OP1: { „+” - adaugă }
+  - OP2: { „-” - scade }
+  - OP3: { „remove” - șterge }
+  - OP4: { operație invalidă – fallback la remove }
+- `quantity`
+  - Q1: { >0 }
+  - Q2: { 0 sau negativ – invalid }
 
-### b) Acoperire la nivel de decizie
-- Testarea tuturor ramurilor din metodele serviciilor
-- Verificare coduri HTTP: 200, 201, 400, 401
+### Domeniul de ieșire:
 
-### c) Acoperire la nivel de condiție
-- Validare egalitate parole
-- Validare operare cart ("+", "-", "remove")
+- HTTP 201 (Created) – succes înregistrare
+- HTTP 400 (Bad Request) – date invalide
+- HTTP 401 (Unauthorized) – login greșit
+- HTTP 200 (OK) – operații coș reușite
 
-### d) Testarea circuitelor independente
+### Clase globale de echivalență construite:
 
-Calcul McCabe:
-- e = 18, n = 16, p = 1
-- V(G) = 18 - 16 + 2 = **4** fluxuri independente
+| Clasă | Condiții |
+|:---|:---|
+| G_111 | Email valid, parola validă, prefix valid |
+| G_211 | Email invalid, restul valid |
+| G_121 | Email valid, parolă invalidă |
+| G_112 | Email valid, prefix invalid |
+| G_221 | Email invalid, parolă invalidă |
 
-Circuite testate:
-- Flux de înregistrare corectă
-- Flux de login eșuat
-- Flux de adăugare produs în coș
-- Flux de fallback la operare invalidă
+**Exemple de cazuri concrete extrase din teste:**
+- G_111: (abcdef@yahoo.com, password123, +40)
+- G_211: (not-an-email, password123, +40)
+- G_121: (abcdef@yahoo.com, pass, +40)
 
 
-## 5. Rezultate Coverage
+## (b) Analiza valorilor de frontieră
+
+Analiza aplicată pe:
+- Lungimea parolei
+- Formatul emailului
+- Cantitatea în coș
+
+### Limite relevante:
+
+| Parametru | Valori testate |
+|:---|:---|
+| Password | 7 caractere → invalid, 8 caractere → valid |
+| Email | string valid / string fără `@` sau `.`, invalid |
+| Quantity | 0 (invalid) / 1 (valid) |
+
+### Seturi de date:
+
+| Test | Input | Așteptare |
+|:---|:---|:---|
+| Password = 7 caractere | Eșec la înregistrare (400) |
+| Password = 8 caractere | Succes înregistrare (201) |
+| Email fără `@` | Eșec înregistrare (400) |
+| Quantity = 0 | Fallback / eroare la adăugare în coș |
+
+
+# 3. Testarea structurală
+
+## (a) Graful de flux de control
+
+Fluxuri verificate explicit în testele unitare și funcționale:
+- Înregistrare corectă
+- Înregistrare eșuată
+- Login corect
+- Login eșuat
+- Adăugare produs în coș
+- Eliminare produs din coș
+- Operare invalidă fallback
+
+
+## (b) Acoperire la nivel de instrucțiune (statement coverage)
+
+**Asigurat de teste:**
+- Creare utilizator cu date valide
+- Gestionare erori la input invalid
+- Generare tokenuri
+- Operații createCart / deleteCart / clearCart
+
+✔️ Toate metodele majore sunt parcurse cel puțin o dată.
+
+
+## (c) Acoperire la nivel de decizie (decision coverage)
+
+| Decizie | Acoperire |
+|:---|:---|
+| Validarea emailului la register | True + False |
+| Validarea parolei | True + False |
+| Alegerea operației în UpdateCart | +, -, remove, invalid fallback |
+
+✔️ Toate deciziile principale din flux au fost testate atât pentru ramura pozitivă cât și pentru cea negativă.
+
+
+## (d) Acoperire la nivel de condiție (condition coverage)
+
+| Condiție | Acoperire |
+|:---|:---|
+| Email valid vs invalid | True/False |
+| Password length corectă vs incorectă | True/False |
+| Cantitate pozitivă în coș vs 0 | True/False |
+
+
+## (e) Testarea circuitelor independente
+
+Folosind complexitatea ciclomatică McCabe:
+- e = 18 muchii
+- n = 16 noduri
+- p = 1 componentă conectată
+
+**V(G) = 18 - 16 + 2×1 = 4**
+
+Testele acoperă 4 drumuri independente:
+- Înregistrare succes
+- Înregistrare eroare email
+- Login succes
+- Operare invalidă fallback
+
+
+
+## 4. Rezultate Coverage
 
 | Tip coverage | Status |
 | :--- | :--- |
