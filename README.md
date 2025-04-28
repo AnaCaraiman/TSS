@@ -236,34 +236,18 @@ Testele acoperă 4 drumuri independente:
 
 ## Tabel de Decizie
 
-Acest tabel prezintă deciziile și acțiunile sistemului pe baza diverselor condiții de validare pentru operațiile de login, înregistrare și gestionare a coșului de cumpărături.
-
-| **Regula** | **C1 (Email corect)** | **C2 (Parola corectă)** | **C3 (Înregistrare completă)** | **C4 (User existent)** | **C5 (Produs existent)** | **Acțiune**                                                                 |
-|------------|-----------------------|-------------------------|-------------------------------|------------------------|--------------------------|-----------------------------------------------------------------------------|
-| **R1** | Da                    | Da                      | Da                            | Nu                     | Nu                       | Login reușit, returnează `token` și `user`                                   |
-| **R2** | Da                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare login, mesaj: "Wrong email or password"                              |
-| **R3** | Da                    | Da                      | Da                            | Da                     | Nu                       | Înregistrare cu email deja folosit, mesaj: "User already exists"            |
-| **R4** | Da                    | Da                      | Da                            | Nu                     | Nu                       | Creare user nou, returnează `message`, `user`, `accessToken`                 |
-| **R5** | Nu                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare, mesaj: "Email și parolă incorecte"                                  |
-| **R6** | Nu                    | Nu                      | Nu                            | Da                     | Nu                       | Eroare, mesaj: "Email invalid"                                              |
-| **R7** | Nu                    | Nu                      | Nu                            | Nu                     | Da                       | Eroare, mesaj: "Produs inexistent"                                          |
-| **R8** | Nu                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare, mesaj: "Product not found"                                          |
-| **R9** | Nu                    | Nu                      | Nu                            | Nu                     | Da                       | Adăugare produs în coș, returnare actualizare `cart`                        |
-| **R10**| Da                    | Nu                      | Nu                            | Nu                     | Da                       | Adăugare produs în coș, returnare actualizare `cart`                        |
-| **R11**| Da                    | Da                      | Nu                            | Nu                     | Da                       | Actualizare cantitate în coș, returnare nouă stare coș                      |
-
-## Reguli:
-1. **R1**: Dacă **email-ul este corect**, **parola este corectă**, și **înregistrarea este completă**, utilizatorul se autentifică cu succes și sistemul returnează un `token` și `user`.
-2. **R2**: Dacă **email-ul este corect**, dar **parola este incorectă**, apare un mesaj de eroare cu textul "Wrong email or password".
-3. **R3**: Dacă **email-ul este corect**, **parola este corectă**, dar **utilizatorul există deja**, apare mesajul de eroare "User already exists".
-4. **R4**: Dacă **email-ul este corect**, **parola este corectă** și **utilizatorul nu există**, se creează un utilizator nou și se returnează mesajul, `user` și `accessToken`.
-5. **R5**: Dacă **email-ul și parola sunt incorecte**, apare un mesaj de eroare "Email și parolă incorecte".
-6. **R6**: Dacă **email-ul nu este corect** și **parola nu este corectă**, apare un mesaj "Email invalid".
-7. **R7**: Dacă **email-ul și parola sunt corecte**, dar **produsul nu există**, apare un mesaj de eroare "Produs inexistent".
-8. **R8**: Dacă **email-ul și parola nu sunt corecte** și **produsul nu este găsit**, apare mesajul "Product not found".
-9. **R9**: Dacă **email-ul și parola sunt corecte**, dar **produsul există**, se adaugă produsul în coș și se returnează actualizarea coșului.
-10. **R10**: Dacă **email-ul este corect**, dar **parola nu este corectă**, și **produsul există**, se adaugă produsul în coș.
-11. **R11**: Dacă **email-ul și parola sunt corecte**, dar **produsul există**, și **cantitatea din coș trebuie actualizată**, se actualizează cantitatea din coș.
+| **Nr. Regula** | **Regula** | **C1 (Email corect)** | **C2 (Parola corectă)** | **C3 (Înregistrare completă)** | **C4 (User existent)** | **C5 (Produs existent)** | **Acțiune** | **Test** | **Descriere** |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| **R1** | Login reușit | Da | Da | Da | Nu | Nu | Login reușit, returnează token și user | `test_user_can_login_successfully` | Verifică login-ul cu email și parolă corecte, se returnează un **message**, **user** și **accessToken**. |
+| **R2** | Eșec login cu credențiale greșite | Da | Nu | Nu | Nu | Nu | Eroare login, mesaj: "Wrong email or password." | `test_login_fails_with_wrong_credentials` | Verifică că login-ul eșuează când parola este greșită, iar mesajul de eroare este **"Wrong email or password."**. |
+| **R3** | Înregistrare cu email deja folosit | Da | Da | Da | Da | Nu | Înregistrare cu email deja folosit, mesaj: "User already exists" | `test_registration_fails_with_invalid_data` | Verifică eroarea înregistrării unui utilizator cu un email deja existent. |
+| **R4** | Creare user nou | Da | Da | Da | Nu | Nu | Creare user nou, returnează message, user, accessToken | `test_user_can_register_with_valid_data` | Înregistrarea unui utilizator nou cu date valide, returnează un **message**, **user** și **accessToken**. |
+| **R5** | Eroare login, mesaje incorecte | Nu | Nu | Nu | Nu | Nu | Eroare, mesaj: "Email invalid" | `test_registration_fails_with_invalid_data` | Verifică eroarea pentru un email invalid, mesajul de eroare fiind **"Email invalid"**. |
+| **R6** | Produs inexistent | Nu | Nu | Nu | Nu | Da | Eroare, mesaj: "Produs inexistent" | `test_user_can_add_product_to_cart` | Verifică eroarea în cazul în care produsul nu există. |
+| **R7** | Adăugare produs în coș | Da | Da | Da | Nu | Da | Adăugare produs în coș, returnează actualizare cart | `test_user_can_add_product_to_cart` | Adaugă un produs valid în coș, returnează actualizarea coșului. |
+| **R8** | Actualizare cantitate în coș | Da | Da | Nu | Nu | Da | Actualizare cantitate în coș, returnează nouă stare coș | `test_update_cart_add_quantity` | Actualizează cantitatea unui produs din coș, returnează coșul actualizat. |
+| **R9** | Actualizare cantitate în coș (scădere cantitate) | Da | Da | Nu | Nu | Da | Actualizare cantitate în coș, returnează nouă stare coș | `test_update_cart_remove_quantity` | Scade cantitatea unui produs din coș, returnează coșul actualizat. |
+| **R10** | Operațiune invalidă | Da | Da | Nu | Nu | Da | Operațiune invalidă, produs eliminat din coș | `test_invalid_operation_defaults_to_remove_item` | Verifică comportamentul în caz de operațiune invalidă, produsul este eliminat din coș. |
 
 
 
