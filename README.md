@@ -270,13 +270,14 @@ Magento este o platformă open-source de e-commerce lansată în 2008. Este scri
 - Costuri ascunse — Deși este open-source, multe extensii utile sunt contra cost.
 - Update-uri dificile — Versiunile noi pot necesita refactorizări serioase la module personalizate.
 
-## Comparatie Magento vs Proiectul nostru
+## Comparație Magento vs Proiectul nostru
 
-| Caracteristica        | Magento                                        | Proiectul nostru                                |
-|------------------------|-------------------------------------------------|-------------------------------------------------|
-| **Arhitectura**        | Monolitica, extensibila prin module            | Microservicii independente                     |
-| **Complexitate**       | Ridicata, necesita experienta                 | Medie, usor de inteles pentru incepatori        |
-| **Extensibilitate**    | Foarte mare (module, teme, marketplace)        | Redusa, orientata pe invatare                  |
-| **Resurse necesare**   | Servere puternice, echipe specializate         | Resurse minime, poate rula local                |
+| Caracteristică         | Magento                                        | Proiectul nostru                                |
+|------------------------|------------------------------------------------|-------------------------------------------------|
+| **Arhitectura**         | Monolitică, extensibilă prin module           | Microservicii independente                      |
+| **Complexitate**        | Ridicată, necesită experiență                 | Medie, ușor de înțeles pentru începători        |
+| **Extensibilitate**     | Foarte mare (module, teme, marketplace)       | Redusă, orientată pe învățare                   |
+| **Resurse necesare**    | Servere puternice, echipe specializate        | Resurse minime, poate rula local                |
+
 
 
