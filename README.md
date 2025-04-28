@@ -97,56 +97,69 @@ tests/
 
 ## Etapa 2 
 
-## 1. Configurare mediu de testare
+## 1. Configurare
 
-- Teste unitare: Mockery pentru simularea depozitelor (repositories)
-- Teste funcționale: RefreshDatabase pentru resetarea bazei de date
-- Setup automat GitHub Actions pentru rulare la push
+- Laravel: RefreshDatabase Trait
+- Mockery: simulare Repository-uri
+- Teste HTTP: Feature testing pentru API
+- PHPUnit config cu coverage activ
 
 
-## 2. Equivalence Class Analysis (Strict pe teste)
+## 2. Analiza funcțională (Partitionare de echivalență)
 
-| Test | Input principal | Clase de echivalență |
+| Test | Domeniu | Clase de echivalență |
 | :--- | :--- | :--- |
-| RegisterUserTest | email, password, phone | email valid/invalid; password matching; prefix valid |
-| LoginUserTest | email, password | email existent vs inexistent; parola corectă vs incorectă |
-| UpdateCartTest | operation (+, -, remove) | valid add/remove/invalid |
+| RegisterUserTest | email, password, phone | valid/invalid email, parola potrivită, prefix corect |
+| LoginUserTest | email, password | email existent/inexistent, parola corectă/greșită |
+| UpdateCartTest | operation, quantity | valid (+/-/remove), invalid |
 
+## 3. Analiza valorilor de frontieră (Boundary Value Analysis)
 
-## 3. Boundary Value Analysis
-
-| Parametru | Valori testate |
+| Parametru | Limite |
 | :--- | :--- |
-| password length | >=8 caractere |
-| quantity in cart update | >0 |
-| email format | valid vs invalid |
+| Password | 7 caractere (invalid), 8 caractere (valid) |
+| Quantity | 0 (invalid), 1 (valid) |
+| Email | format valid vs invalid |
+
+## 4. Testarea Structurală
+
+### a) Acoperire la nivel de instrucțiune
+- Trecere prin toate metodele: `registerUser`, `getTokens`, `createCart`, `addCartItem`
+- Teste pentru fluxuri de succes și eșec
+
+### b) Acoperire la nivel de decizie
+- Testarea tuturor ramurilor din metodele serviciilor
+- Verificare coduri HTTP: 200, 201, 400, 401
+
+### c) Acoperire la nivel de condiție
+- Validare egalitate parole
+- Validare operare cart ("+", "-", "remove")
+
+### d) Testarea circuitelor independente
+
+Calcul McCabe:
+- e = 18, n = 16, p = 1
+- V(G) = 18 - 16 + 2 = **4** fluxuri independente
+
+Circuite testate:
+- Flux de înregistrare corectă
+- Flux de login eșuat
+- Flux de adăugare produs în coș
+- Flux de fallback la operare invalidă
 
 
-## 4. Independent Path Testing (control flow)
+## 5. Rezultate Coverage
 
-| Test | Fluxuri testate |
-| :--- | :--- |
-| RegisterUserTest | validare corectă, invalid email |
-| LoginUserTest | succes autentificare, parolă greșită |
-| UpdateCartTest | operare +/-, fallback operare invalidă |
-| CartServiceTest | creare coș success/fail |
-| CartItemServiceTest | adăugare produs success/fail, modificare cantitate |
-
-
-## 5. Rezumat Coverage
-
-| Tip Coverage | Realizat |
+| Tip coverage | Status |
 | :--- | :--- |
 | Statement coverage | ✅ |
 | Branch coverage | ✅ |
-| Condition coverage | Partial |
+| Condition coverage | parțial |
 | Path coverage | ✅ |
 
 
 # Concluzie
 
-Testele existente validează atât funcționalitatea pozitivă, cât și gestionarea erorilor sau a fluxurilor alternative.
+Testele PHP implementate validează în mod riguros atât comportamentul funcțional, cât și structura internă a serviciilor dezvoltate.
 
-Prin aplicarea testării funcționale și structurale, împreună cu Mockery și PHPUnit, s-a realizat o acoperire semnificativă a codului aplicației PHP.
-
-Integrarea automata prin GitHub Actions și măsurarea coverage-ului permit o dezvoltare continuă și sigură.
+Prin aplicarea metodelor de partitionare de echivalență, analiza valorilor de frontieră și analiza ciclomatică a drumurilor independente, s-a realizat o acoperire completă a cerințelor funcționale și structurale ale aplicației.
