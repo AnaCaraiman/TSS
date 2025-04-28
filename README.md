@@ -245,8 +245,38 @@ Testele acoperă 4 drumuri independente:
 | Path coverage | ✅ |
 
 
+
 # Concluzie
 
 Testele PHP implementate validează în mod riguros atât comportamentul funcțional, cât și structura internă a serviciilor dezvoltate.
 
 Prin aplicarea metodelor de partitionare de echivalență, analiza valorilor de frontieră și analiza ciclomatică a drumurilor independente, s-a realizat o acoperire completă a cerințelor funcționale și structurale ale aplicației.
+
+
+
+## 5. Evaluarea unei platforme existente
+
+## Descriere: 
+Magento este o platformă open-source de e-commerce lansată în 2008. Este scrisă în PHP și utilizează baze de date MySQL sau MariaDB. Magento oferă o arhitectură modulară și suportă extensii și personalizări variate.
+
+## Avantaje:
+- Platformă completă — Tot ce ai nevoie pentru un magazin online este deja integrat: catalog produse, management comenzi, plăți, livrare, rapoarte.
+- Multi-store — Poți administra mai multe magazine dintr-un singur panou de control.
+- Extensibilitate uriașă — Există mii de module și teme pentru a personaliza aproape orice aspect.
+
+## Dezavantaje:
+- Complexitate mare — Curbă de învățare abruptă, necesită dezvoltatori cu experiență.
+- Resurse consumatoare — Necesită servere puternice, mai ales pentru magazine mari.
+- Costuri ascunse — Deși este open-source, multe extensii utile sunt contra cost.
+- Update-uri dificile — Versiunile noi pot necesita refactorizări serioase la module personalizate.
+
+## Comparatie Magento vs Proiectul nostru
+
+| Caracteristica        | Magento                                        | Proiectul nostru                                |
+|------------------------|-------------------------------------------------|-------------------------------------------------|
+| **Arhitectura**        | Monolitica, extensibila prin module            | Microservicii independente                     |
+| **Complexitate**       | Ridicata, necesita experienta                 | Medie, usor de inteles pentru incepatori        |
+| **Extensibilitate**    | Foarte mare (module, teme, marketplace)        | Redusa, orientata pe invatare                  |
+| **Resurse necesare**   | Servere puternice, echipe specializate         | Resurse minime, poate rula local                |
+
+
