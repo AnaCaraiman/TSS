@@ -249,6 +249,9 @@ Testele acoperă 4 drumuri independente:
 | **R9** | Actualizare cantitate în coș (scădere cantitate) | Da | Da | Nu | Nu | Da | Actualizare cantitate în coș, returnează nouă stare coș | `test_update_cart_remove_quantity` | Scade cantitatea unui produs din coș, returnează coșul actualizat. |
 | **R10** | Operațiune invalidă | Da | Da | Nu | Nu | Da | Operațiune invalidă, produs eliminat din coș | `test_invalid_operation_defaults_to_remove_item` | Verifică comportamentul în caz de operațiune invalidă, produsul este eliminat din coș. |
 
+## Graful fluxului de control
+
+![17458436413761939473873875167879](https://github.com/user-attachments/assets/8d16f8c6-33b4-4b58-a46b-1afc574e3106)
 
 
 # 4. Rezultate Coverage
