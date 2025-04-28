@@ -83,9 +83,9 @@ composer require --dev phpunit/phpunit mockery/mockery
 ```
 
 
-## Etapa 2 
+# Etapa 2 
 
-## 1. Configurare
+# 1. Configurare
 
 - Laravel: RefreshDatabase Trait
 - Mockery: simulare Repository-uri
@@ -93,7 +93,7 @@ composer require --dev phpunit/phpunit mockery/mockery
 - PHPUnit config cu coverage activ
 
 
-## 2. Testarea funcțională
+# 2. Testarea funcțională
 
 ## (a) Partiționare de echivalență
 
@@ -234,8 +234,40 @@ Testele acoperă 4 drumuri independente:
 - Operare invalidă fallback
 
 
+## Tabel de Decizie
 
-## 4. Rezultate Coverage
+Acest tabel prezintă deciziile și acțiunile sistemului pe baza diverselor condiții de validare pentru operațiile de login, înregistrare și gestionare a coșului de cumpărături.
+
+| **Regula** | **C1 (Email corect)** | **C2 (Parola corectă)** | **C3 (Înregistrare completă)** | **C4 (User existent)** | **C5 (Produs existent)** | **Acțiune**                                                                 |
+|------------|-----------------------|-------------------------|-------------------------------|------------------------|--------------------------|-----------------------------------------------------------------------------|
+| **R1** | Da                    | Da                      | Da                            | Nu                     | Nu                       | Login reușit, returnează `token` și `user`                                   |
+| **R2** | Da                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare login, mesaj: "Wrong email or password"                              |
+| **R3** | Da                    | Da                      | Da                            | Da                     | Nu                       | Înregistrare cu email deja folosit, mesaj: "User already exists"            |
+| **R4** | Da                    | Da                      | Da                            | Nu                     | Nu                       | Creare user nou, returnează `message`, `user`, `accessToken`                 |
+| **R5** | Nu                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare, mesaj: "Email și parolă incorecte"                                  |
+| **R6** | Nu                    | Nu                      | Nu                            | Da                     | Nu                       | Eroare, mesaj: "Email invalid"                                              |
+| **R7** | Nu                    | Nu                      | Nu                            | Nu                     | Da                       | Eroare, mesaj: "Produs inexistent"                                          |
+| **R8** | Nu                    | Nu                      | Nu                            | Nu                     | Nu                       | Eroare, mesaj: "Product not found"                                          |
+| **R9** | Nu                    | Nu                      | Nu                            | Nu                     | Da                       | Adăugare produs în coș, returnare actualizare `cart`                        |
+| **R10**| Da                    | Nu                      | Nu                            | Nu                     | Da                       | Adăugare produs în coș, returnare actualizare `cart`                        |
+| **R11**| Da                    | Da                      | Nu                            | Nu                     | Da                       | Actualizare cantitate în coș, returnare nouă stare coș                      |
+
+## Reguli:
+1. **R1**: Dacă **email-ul este corect**, **parola este corectă**, și **înregistrarea este completă**, utilizatorul se autentifică cu succes și sistemul returnează un `token` și `user`.
+2. **R2**: Dacă **email-ul este corect**, dar **parola este incorectă**, apare un mesaj de eroare cu textul "Wrong email or password".
+3. **R3**: Dacă **email-ul este corect**, **parola este corectă**, dar **utilizatorul există deja**, apare mesajul de eroare "User already exists".
+4. **R4**: Dacă **email-ul este corect**, **parola este corectă** și **utilizatorul nu există**, se creează un utilizator nou și se returnează mesajul, `user` și `accessToken`.
+5. **R5**: Dacă **email-ul și parola sunt incorecte**, apare un mesaj de eroare "Email și parolă incorecte".
+6. **R6**: Dacă **email-ul nu este corect** și **parola nu este corectă**, apare un mesaj "Email invalid".
+7. **R7**: Dacă **email-ul și parola sunt corecte**, dar **produsul nu există**, apare un mesaj de eroare "Produs inexistent".
+8. **R8**: Dacă **email-ul și parola nu sunt corecte** și **produsul nu este găsit**, apare mesajul "Product not found".
+9. **R9**: Dacă **email-ul și parola sunt corecte**, dar **produsul există**, se adaugă produsul în coș și se returnează actualizarea coșului.
+10. **R10**: Dacă **email-ul este corect**, dar **parola nu este corectă**, și **produsul există**, se adaugă produsul în coș.
+11. **R11**: Dacă **email-ul și parola sunt corecte**, dar **produsul există**, și **cantitatea din coș trebuie actualizată**, se actualizează cantitatea din coș.
+
+
+
+# 4. Rezultate Coverage
 
 | Tip coverage | Status |
 | :--- | :--- |
@@ -254,7 +286,7 @@ Prin aplicarea metodelor de partitionare de echivalență, analiza valorilor de 
 
 
 
-## 5. Evaluarea unei platforme existente
+# 5. Evaluarea unei platforme existente
 
 ## Descriere: 
 Magento este o platformă open-source de e-commerce lansată în 2008. Este scrisă în PHP și utilizează baze de date MySQL sau MariaDB. Magento oferă o arhitectură modulară și suportă extensii și personalizări variate.
