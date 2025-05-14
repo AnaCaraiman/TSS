@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [master]
 
+env:
+  RABBITMQ_HOST: localhost
+  RABBITMQ_PORT: 5672
+  RABBITMQ_USER: guest
+  RABBITMQ_PASSWORD: guest
+  RABBITMQ_QUEUE: default
+  RABBITMQ_VHOST: /
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -14,6 +22,17 @@ jobs:
         service:
           [ms-auth, ms-cart, ms-catalog, ms-order, ms-payment, ms-product]
     continue-on-error: true
+    services:
+      rabbitmq:
+        image: rabbitmq:3.11-management
+        ports:
+          - 5672:5672
+          - 15672:15672
+        options: >-
+          --health-cmd "rabbitmqctl status"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
 
     steps:
       - uses: actions/checkout@v3
