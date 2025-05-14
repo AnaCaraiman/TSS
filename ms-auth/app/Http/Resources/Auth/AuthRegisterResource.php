@@ -13,7 +13,7 @@ class AuthRegisterResource
         return response()->json([
             'message' => 'Invalid data.',
             'errors' => $errors->toArray(),
-        ], 401);
+        ], 400);
     }
 
     public static function success(array $user, string $accessToken, Cookie $cookie): JsonResponse
