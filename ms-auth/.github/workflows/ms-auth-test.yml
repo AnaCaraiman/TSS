@@ -1,0 +1,62 @@
+name: Run Tests (ms-auth)
+
+on:
+  push:
+    paths:
+      - "ms-auth/**"
+  pull_request:
+    paths:
+      - "ms-auth/**"
+
+jobs:
+  test-ms-auth:
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: ms_auth_test
+          MYSQL_USER: user
+          MYSQL_PASSWORD: password
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=3
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, bcmath, pdo_mysql
+
+      - name: Install dependencies
+        working-directory: ms-auth
+        run: composer install --prefer-dist --no-progress
+
+      - name: Create .env
+        working-directory: ms-auth
+        run: cp .env.example .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=ms_auth_test/' .env
+          sed -i 's/DB_USERNAME=root/DB_USERNAME=user/' .env
+          sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/' .env
+
+      - name: Generate app key
+        working-directory: ms-auth
+        run: php artisan key:generate
+
+      - name: Run migrations
+        working-directory: ms-auth
+        run: php artisan migrate --force
+
+      - name: Run tests
+        working-directory: ms-auth
+        run: php artisan test

@@ -1,0 +1,47 @@
+name: Test All Services
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [ms-auth, ms-cart, ms-catalog] # Add your services here
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.2
+          extensions: mbstring, bcmath, pdo_mysql
+
+      - name: Install dependencies
+        working-directory: ${{ matrix.service }}
+        run: composer install --prefer-dist --no-progress
+
+      - name: Prepare environment
+        working-directory: ${{ matrix.service }}
+        run: |
+          cp .env.example .env
+          sed -i 's/DB_DATABASE=laravel/DB_DATABASE=${{ matrix.service }}_test/' .env
+          sed -i 's/DB_USERNAME=root/DB_USERNAME=user/' .env
+          sed -i 's/DB_PASSWORD=/DB_PASSWORD=password/' .env
+
+      - name: Generate app key
+        working-directory: ${{ matrix.service }}
+        run: php artisan key:generate
+
+      - name: Run migrations
+        working-directory: ${{ matrix.service }}
+        run: php artisan migrate --force
+
+      - name: Run tests
+        working-directory: ${{ matrix.service }}
+        run: php artisan test
