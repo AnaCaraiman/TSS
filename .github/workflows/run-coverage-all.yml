@@ -1,4 +1,4 @@
-name: Test All Services
+name: Calculate Coverage
 
 on:
   push:
@@ -15,7 +15,7 @@ env:
   RABBITMQ_VHOST: /
 
 jobs:
-  test:
+  coverage:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -59,8 +59,21 @@ jobs:
         working-directory: ${{ matrix.service }}
         run: php artisan migrate --force
 
-      - name: Run PHPUnit with coverage
+      #   - name: Run PHPUnit with coverage
+      #     working-directory: ${{ matrix.service }}
+      #     env:
+      #       XDEBUG_MODE: coverage
+      #     run: vendor/bin/phpunit --coverage-text
+
+      - name: Run PHPUnit with coverage(HTML)
         working-directory: ${{ matrix.service }}
         env:
           XDEBUG_MODE: coverage
-        run: vendor/bin/phpunit --coverage-text
+        run: vendor/bin/phpunit --coverage-html coverage-html
+
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
+        continue-on-error: true
+        with:
+          name: coverage-${{ matrix.service }}
+          path: ${{ matrix.service }}/coverage-html
