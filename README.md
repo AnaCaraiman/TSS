@@ -236,18 +236,33 @@ Testele acoperă 4 drumuri independente:
 
 ## Tabel de Decizie
 
-| **Nr. Regula** | **Regula** | **C1 (Email corect)** | **C2 (Parola corectă)** | **C3 (Înregistrare completă)** | **C4 (User existent)** | **C5 (Produs existent)** | **Acțiune** | **Test** | **Descriere** |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| **R1** | Login reușit | Da | Da | Da | Nu | Nu | Login reușit, returnează token și user | `test_user_can_login_successfully` | Verifică login-ul cu email și parolă corecte, se returnează un **message**, **user** și **accessToken**. |
-| **R2** | Eșec login cu credențiale greșite | Da | Nu | Nu | Nu | Nu | Eroare login, mesaj: "Wrong email or password." | `test_login_fails_with_wrong_credentials` | Verifică că login-ul eșuează când parola este greșită, iar mesajul de eroare este **"Wrong email or password."**. |
-| **R3** | Înregistrare cu email deja folosit | Da | Da | Da | Da | Nu | Înregistrare cu email deja folosit, mesaj: "User already exists" | `test_registration_fails_with_invalid_data` | Verifică eroarea înregistrării unui utilizator cu un email deja existent. |
-| **R4** | Creare user nou | Da | Da | Da | Nu | Nu | Creare user nou, returnează message, user, accessToken | `test_user_can_register_with_valid_data` | Înregistrarea unui utilizator nou cu date valide, returnează un **message**, **user** și **accessToken**. |
-| **R5** | Eroare login, mesaje incorecte | Nu | Nu | Nu | Nu | Nu | Eroare, mesaj: "Email invalid" | `test_registration_fails_with_invalid_data` | Verifică eroarea pentru un email invalid, mesajul de eroare fiind **"Email invalid"**. |
-| **R6** | Produs inexistent | Nu | Nu | Nu | Nu | Da | Eroare, mesaj: "Produs inexistent" | `test_user_can_add_product_to_cart` | Verifică eroarea în cazul în care produsul nu există. |
-| **R7** | Adăugare produs în coș | Da | Da | Da | Nu | Da | Adăugare produs în coș, returnează actualizare cart | `test_user_can_add_product_to_cart` | Adaugă un produs valid în coș, returnează actualizarea coșului. |
-| **R8** | Actualizare cantitate în coș | Da | Da | Nu | Nu | Da | Actualizare cantitate în coș, returnează nouă stare coș | `test_update_cart_add_quantity` | Actualizează cantitatea unui produs din coș, returnează coșul actualizat. |
-| **R9** | Actualizare cantitate în coș (scădere cantitate) | Da | Da | Nu | Nu | Da | Actualizare cantitate în coș, returnează nouă stare coș | `test_update_cart_remove_quantity` | Scade cantitatea unui produs din coș, returnează coșul actualizat. |
-| **R10** | Operațiune invalidă | Da | Da | Nu | Nu | Da | Operațiune invalidă, produs eliminat din coș | `test_invalid_operation_defaults_to_remove_item` | Verifică comportamentul în caz de operațiune invalidă, produsul este eliminat din coș. |
+### Login
+
+| **Nr.** | **C1: Email găsit** | **C2: Parolă corectă** | **Acțiune**                                                      | **Test**                                 | **Descriere**                                           |
+|:-------:|:-------------------:|:----------------------:|------------------------------------------------------------------|-------------------------------------------|---------------------------------------------------------|
+| **R1**  | Da                  | Da                     | Login reușit → returnează `message`, `user`, `accessToken`       | `test_user_can_login_successfully`        | Verifică login-ul cu email și parolă corecte.           |
+| **R2**  | Da                  | Nu                     | Eroare 401 → `"Wrong email or password."`                         | `test_login_fails_with_wrong_credentials` | Verifică că login-ul eșuează când parola este greșită.  |
+
+---
+
+### Register
+
+| **Nr.** | **R1: Email valid (format)** | **R2: User ∉ DB** | **Acțiune**                                                       | **Test**                                    | **Descriere**                                                                                   |
+|:-------:|:-----------------------------:|:-----------------:|-------------------------------------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------------------------|
+| **R4**  | Nu                            | —                 | Eroare 400 → validare JSON cu `errors`, `message`                 | `test_registration_fails_with_invalid_data`  | Verifică eroarea când email-ul nu are format valid.                                            |
+| **R6**  | Da                            | Nu                | Creare user nou → returnează `message`, `user`, `accessToken`      | `test_user_can_register_with_valid_data`     | Înregistrează un utilizator nou cu date valide și confirmă returnarea token-ului și actualizarea DB. |
+
+---
+
+### Cart
+
+| **Nr.** | **Operațiune** | **Acțiune**                                                | **Test**                                      | **Descriere**                                                    |
+|:-------:|:--------------:|------------------------------------------------------------|-----------------------------------------------|------------------------------------------------------------------|
+| **R7**  | `+`            | Adaugă produs în coș → returnează `items`                  | `test_user_can_add_product_to_cart`           | Testează adăugarea unui produs valid în coș.                      |
+| **R8**  | `-`            | Scade cantitatea produsului → returnează `items`           | `test_update_cart_remove_quantity`            | Testează scăderea cantității unui produs existent în coș.        |
+| **R9**  | *other*        | Elimină produs din coș → returnează `items`                | `test_invalid_operation_defaults_to_remove_item` | Verifică ștergerea produsului când operațiunea nu este validă. |
+
+---
 
 ## Graful fluxului de control
 Pașii principali ai fluxului de autentificare, înregistrare și operațiuni pe coș
