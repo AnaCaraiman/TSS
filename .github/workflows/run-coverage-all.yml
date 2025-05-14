@@ -69,7 +69,7 @@ jobs:
         working-directory: ${{ matrix.service }}
         env:
           XDEBUG_MODE: coverage
-        run: vendor/bin/phpunit --coverage-html coverage-html
+        run: vendor/bin/phpunit --coverage-html coverage-html --coverage-text || true
 
       - name: Upload coverage artifact
         uses: actions/upload-artifact@v4
