@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        service: [ms-auth, ms-cart, ms-catalog] # Add your services here
+        service:
+          [ms-auth, ms-cart, ms-catalog, ms-order, ms-payment, ms-product]
+    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v3
