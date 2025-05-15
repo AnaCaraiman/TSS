@@ -5,13 +5,32 @@ namespace Tests\Feature\Auth;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use App\Models\User;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Mockery\MockInterface;
 
 class RegisterUserTest extends TestCase
 {
     use RefreshDatabase;
+    public function setUp(): void
+    {
+        parent::setUp();
 
+        $mockChannel = \Mockery::mock();
+        $mockChannel->shouldIgnoreMissing(); // Let channel() calls go through safely
+        $mockConnection = \Mockery::mock(AMQPStreamConnection::class, function (MockInterface $mock) use ($mockChannel) {
+            $mock->shouldReceive('channel')->andReturn($mockChannel);
+        });
+        //$mockConnection->shouldReceive('channel')->andReturn($mockChannel);
+
+        $this->app->instance(AMQPStreamConnection::class, $mockConnection);
+    }
+    public function tearDown(): void
+    {
+        \Mockery::close();
+        parent::tearDown();
+    }
     public function test_user_can_register_with_valid_data()
-    {   
+    {
         $response = $this->postJson('/api/auth/register', [
             'last_name' => 'Victor',
             'first_name' => 'Cucu',
@@ -23,11 +42,11 @@ class RegisterUserTest extends TestCase
         ]);
 
         $response->assertStatus(201)
-                ->assertJsonStructure([
-                    'message',
-                    'user',
-                    'accessToken',
-                ]);
+            ->assertJsonStructure([
+                'message',
+                'user',
+                'accessToken',
+            ]);
 
         $this->assertDatabaseHas('users', [
             'email' => 'abcdef@yahoo.com',
@@ -42,9 +61,9 @@ class RegisterUserTest extends TestCase
         ]);
 
         $response->assertStatus(400)
-                 ->assertJsonStructure([
-                     'errors',
-                     "message",
-                 ]);
+            ->assertJsonStructure([
+                'errors',
+                "message",
+            ]);
     }
 }

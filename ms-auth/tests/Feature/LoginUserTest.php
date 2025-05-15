@@ -6,11 +6,26 @@ use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PhpAmqpLib\Connection\AMQPStreamConnection;
+use Mockery\MockInterface;
+
 
 class LoginUserTest extends TestCase
 {
     use RefreshDatabase;
+    public function setUp(): void
+    {
+        parent::setUp();
 
+        $mockChannel = \Mockery::mock();
+        $mockChannel->shouldIgnoreMissing(); // Let channel() calls go through safely
+        $mockConnection = \Mockery::mock(AMQPStreamConnection::class, function (MockInterface $mock) use ($mockChannel) {
+            $mock->shouldReceive('channel')->andReturn($mockChannel);
+        });
+        //$mockConnection->shouldReceive('channel')->andReturn($mockChannel);
+
+        $this->app->instance(AMQPStreamConnection::class, $mockConnection);
+    }
     public function test_user_can_login_successfully()
     {
         $user = User::factory()->create([
