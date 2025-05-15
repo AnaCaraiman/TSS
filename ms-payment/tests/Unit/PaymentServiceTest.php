@@ -38,24 +38,20 @@ class PaymentServiceTest extends TestCase
             'stripe_token' => 'tok_test_visa',
         ]);
 
-        // Assert
         $this->assertEquals('ch_test_123', $paymentId);
     }
 
     #[Test]
     public function it_throws_an_exception_when_stripe_fails()
     {
-        // Arrange
         $mock = Mockery::mock('alias:' . Charge::class);
         $mock->shouldReceive('create')
             ->once()
             ->andThrow(new Exception('Stripe error'));
 
-        // Assert
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Stripe error');
 
-        // Act
         $this->paymentService->makePayment([
             'price' => 10,
             'stripe_token' => 'invalid_token',

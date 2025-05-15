@@ -61,7 +61,6 @@ class ProductService
     }
 
     public function decrementStock(int $productId, int $quantity): void{
-        Log::info('in service');
         $this->productRepository->lowerStock($productId, $quantity);
 
     }

@@ -38,7 +38,7 @@ class FavoriteControllerTest extends TestCase
     #[Test]
     public function it_fails_to_create_favorite_cart_with_invalid_data()
     {
-        $response = $this->postJson('/api/favorite'); // missing user_id
+        $response = $this->postJson('/api/favorite');
 
         $response->assertStatus(400);
         $this->assertStringContainsString('user_id is required', $response->json('message'));

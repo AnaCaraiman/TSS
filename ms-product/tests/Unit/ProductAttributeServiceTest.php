@@ -6,6 +6,7 @@ use App\Repositories\ProductAttributeRepository;
 use App\Services\ProductAttributeService;
 use Exception;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 class ProductAttributeServiceTest extends TestCase
@@ -36,11 +37,10 @@ class ProductAttributeServiceTest extends TestCase
             'attribute_value' => 'Red',
         ]);
 
-        $this->assertTrue(true); // no exception = pass
+        $this->assertTrue(true);
     }
 
-    /** @test */
-    public function it_throws_exception_when_create_attribute_fails()
+    #[Test] public function it_throws_exception_when_create_attribute_fails()
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Attribute not created for product with id 1');
@@ -57,8 +57,7 @@ class ProductAttributeServiceTest extends TestCase
         ]);
     }
 
-    /** @test */
-    public function it_gets_product_attributes_successfully()
+    #[Test] public function it_gets_product_attributes_successfully()
     {
         $this->productAttributeRepository
             ->shouldReceive('getAllAtributesByProductId')
@@ -90,8 +89,7 @@ class ProductAttributeServiceTest extends TestCase
         $this->assertTrue(true);
     }
 
-    /** @test */
-    public function it_throws_exception_when_remove_attribute_fails()
+    #[Test] public function it_throws_exception_when_remove_attribute_fails()
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Attribute with id 1 not removed');

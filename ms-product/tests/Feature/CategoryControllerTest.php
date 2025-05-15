@@ -35,7 +35,7 @@ class CategoryControllerTest extends TestCase
     public function it_fails_to_create_category_with_invalid_data()
     {
         $response = $this->postJson('/api/ms-product/category', [
-            'name' => '', // required
+            'name' => '',
         ]);
 
         $response->assertStatus(400);
@@ -49,7 +49,6 @@ class CategoryControllerTest extends TestCase
             ['name' => 'Tech', 'description' => 'Tech stuff', 'created_at' => now(), 'updated_at' => now()],
         ]);
 
-        // Assuming brands come from products; simulate product data
         DB::table('products')->insert([
             'name' => 'Laptop',
             'brand' => 'Dell',
@@ -58,7 +57,7 @@ class CategoryControllerTest extends TestCase
             'updated_at' => now()
         ]);
 
-        Cache::forget('categories'); // clear to test fresh pull
+        Cache::forget('categories');
 
         $response = $this->getJson('/api/ms-product/category');
 

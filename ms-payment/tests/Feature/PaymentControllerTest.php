@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Http\Controllers\PaymentController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Route;
 use Mockery;
@@ -17,7 +18,7 @@ class PaymentControllerTest extends TestCase
     {
         parent::setUp();
 
-        Route::post('/api/ms-payment', [\App\Http\Controllers\PaymentController::class, 'makePayment']);
+        Route::post('/api/ms-payment', [PaymentController::class, 'makePayment']);
     }
 
     #[Test]
