@@ -92,7 +92,7 @@ composer require --dev phpunit/phpunit mockery/mockery
 - Teste HTTP: Feature testing pentru API
 - PHPUnit config cu coverage activ
 
-  ## Scenarii de testare – aplicația PHP
+## Scenarii de testare – aplicația PHP
 
 În cadrul aplicației PHP am realizat testare funcțională și structurală pe toate funcționalitățile implementate: coș, catalog, favorite, comenzi și autentificare.  Accent pe:
 
@@ -356,9 +356,24 @@ Raportul de acoperire generat automat în pipeline arată că testele sunt conce
 
 
 
+# 6. Mutation Testing (Infection)
+
+Pentru a evalua calitatea reală a testelor unitare și pentru a detecta cazuri în care testele nu reușesc să surprindă modificări semnificative în cod, am integrat în pipeline-ul CI testarea de tip **Mutation Testing** folosind tool-ul [Infection](https://infection.github.io/), specific pentru PHP.
+
+Mutation testing presupune modificarea deliberată (injectarea de mutanți) în codul sursă — de exemplu, schimbarea unui operator `==` în `!=` sau eliminarea unui bloc `if`. Dacă testele nu detectează aceste modificări și nu eșuează, înseamnă că acoperirea nu este semnificativă.
+
+În cazul aplicației noastre, dimensiunea ridicată a codului și testarea extinsă pentru toate microserviciile duc la un număr mare de mutanți generați, mulți dintre aceștia fiind **false positives** sau dependenți de context (de exemplu, acțiuni asupra bazelor de date mockate sau operațiuni async).
+
+Mutation testing a fost integrat în pipeline-ul GitHub Actions, împreună cu analiza de acoperire a codului, și este rulat automat la fiecare `push` în ramura principală. Din considerente de scalabilitate, raportarea completă a mutanților nu este afișată, dar este disponibilă un **summary agregat**, care confirmă rularea corectă a procesului.
+
+> ⚙️ Tool: [Infection PHP](https://infection.github.io/)  
+> 🧪 Status: Activ în CI/CD  
+> 📈 Rezultat:
+![WhatsApp Image 2025-05-16 at 00 15 52_7e2890d4](https://github.com/user-attachments/assets/fd3dea3d-dc7f-47df-b9ac-c987c978982d)
 
 
-# 6. Evaluarea unei platforme existente
+
+# 7. Evaluarea unei platforme existente
 
 ## Descriere: 
 Magento este o platformă open-source de e-commerce lansată în 2008. Este scrisă în PHP și utilizează baze de date MySQL sau MariaDB. Magento oferă o arhitectură modulară și suportă extensii și personalizări variate.
