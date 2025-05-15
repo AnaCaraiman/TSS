@@ -13,6 +13,7 @@ env:
   RABBITMQ_PASSWORD: guest
   RABBITMQ_QUEUE: default
   RABBITMQ_VHOST: /
+  MS_PRODUCT_URL: http://fake-product-service.test
 
 jobs:
   test:
