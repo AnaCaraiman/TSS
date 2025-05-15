@@ -15,6 +15,12 @@ php artisan view:cache
 
 php artisan queue:restart
 
+composer require laravel/octane
+php artisan octane:install
+composer require vladimir-yuldashev/laravel-queue-rabbitmq
+php artisan migrate
+
+
 echo "Testing Laravel logging..."
 php artisan tinker --execute "Log::info('Test log message');"
 

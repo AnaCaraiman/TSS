@@ -2,6 +2,10 @@
 
 composer install --no-interaction --no-dev --optimize-autoloader
 
+composer require laravel/octane vladimir-yuldashev/laravel-queue-rabbitmq
+php artisan octane:install
+php artisan migrate
+
 chmod -R 777 storage/
 
 echo "Testing Laravel logging..."

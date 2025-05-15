@@ -77,3 +77,40 @@ jobs:
         with:
           name: coverage-${{ matrix.service }}
           path: ${{ matrix.service }}/coverage-html
+
+      - name: Generate infection.json config
+        working-directory: ${{ matrix.service }}
+        run: |
+          cat <<EOF > infection.json
+              {
+              "source": {
+                  "directories": ["app"]
+              },
+              "logs": {
+                  "text": "infection-log.txt",
+                  "summary": "infection-summary.txt"
+              },
+              "phpUnit": {
+                  "customPath": "./vendor/bin/phpunit",
+              },
+              "mutators": {
+                  "@default": true
+              }
+          }
+          EOF
+
+      - name: Run Infection (mutation testing)
+        working-directory: ${{ matrix.service }}
+        env:
+          XDEBUG_MODE: coverage
+        run: |
+          composer config --no-plugins allow-plugins.infection/extension-installer true
+          composer require --dev infection/infection --no-interaction
+          vendor/bin/infection --threads=2 --min-msi=50 --only-covered
+
+      - name: Upload Infection report
+        uses: actions/upload-artifact@v4
+        with:
+          name: infection-report-${{ matrix.service }}
+          path: ${{ matrix.service }}/infection-log.txt
+            ${{ matrix.service }}/infection-summary.txt
