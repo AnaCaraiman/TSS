@@ -303,16 +303,16 @@ Pașii principali ai fluxului de autentificare, înregistrare și operațiuni pe
 | Path coverage | ✅ |
 
 
+# 5. Raport coverage (CI)
 
-# Concluzie
-
-Testele PHP implementate validează în mod riguros atât comportamentul funcțional, cât și structura internă a serviciilor dezvoltate.
-
-Prin aplicarea metodelor de partitionare de echivalență, analiza valorilor de frontieră și analiza ciclomatică a drumurilor independente, s-a realizat o acoperire completă a cerințelor funcționale și structurale ale aplicației.
+![WhatsApp Image 2025-05-14 at 21 55 39](https://github.com/user-attachments/assets/b6072795-538a-471a-96a6-38f5621fe523)
+Raportul de acoperire generat automat în pipeline arată că testele sunt concentrate pe componentele de tip Service, acolo unde se află logica principală a aplicației.Modelul de testare aplicat este unul eficient și concentrat pe validarea logicii de business. Acoperirea aproape completă a serviciilor confirmă calitatea testării pentru componentele esențiale ale aplicației.
 
 
 
-# 5. Evaluarea unei platforme existente
+
+
+# 6. Evaluarea unei platforme existente
 
 ## Descriere: 
 Magento este o platformă open-source de e-commerce lansată în 2008. Este scrisă în PHP și utilizează baze de date MySQL sau MariaDB. Magento oferă o arhitectură modulară și suportă extensii și personalizări variate.
