@@ -103,6 +103,8 @@ class AuthServiceTest extends TestCase
         $this->assertEquals($user->email, $createdUser->email);
     }
 
+    
+
     protected function tearDown(): void
     {
         Mockery::close();

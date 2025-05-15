@@ -28,7 +28,9 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
     public function __construct(
-        protected AuthService $authService) {}
+        protected AuthService $authService
+    ) {
+    }
 
     public function login(Request $request): JsonResponse
     {
@@ -83,22 +85,30 @@ class AuthController extends Controller
     public function refresh(Request $request): JsonResponse
     {
         $user = Auth::user();
-        $request->user()->tokens()->where('name', 'access_token')->delete();
+        $userTokens = $user->tokens()->where('name', 'access_token');
+        if ($userTokens->exists()) {
+            $userTokens->delete();
+        }
 
         $accessToken = $this->authService->getAccessToken($user);
-        $cookie = $request->cookie('refreshToken');
+
+        if (!$cookie = $request->cookie('refreshToken') ?? $request->input('refreshToken')) {
+            return response()->json(['message' => 'Missing refresh token'], 400);
+        }
 
         return AuthRefreshResource::success($accessToken, $cookie);
     }
 
-    public function getUserId(): JsonResponse{
+    public function getUserId(): JsonResponse
+    {
         $user = Auth::user();
-        return response()->json(['user_id'=>$user->id],201);
+        return response()->json(['user_id' => $user->id], 201);
     }
 
-    public function getUser():JsonResponse{
+    public function getUser(): JsonResponse
+    {
         $user = Auth::user();
-        return response()->json(['user'=>$user],201);
+        return response()->json(['user' => $user], 201);
     }
 
     public function deleteAccount(Request $request): JsonResponse
@@ -114,7 +124,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'Account deleted successfully'
-        ],201)->withCookie($cookie);
+        ], 201)->withCookie($cookie);
     }
 
     public function uploadProfilePicture(Request $request): JsonResponse
@@ -191,7 +201,8 @@ class AuthController extends Controller
     }
 
 
-    public function changePassword(Request $request): JsonResponse {
+    public function changePassword(Request $request): JsonResponse
+    {
         try {
             $user = $request->user();
             if (!$user->password) {
@@ -201,28 +212,27 @@ class AuthController extends Controller
             $oldPassword = $request->input('old_password');
             $newPassword = $request->input('new_password');
 
-            if(Hash::check($oldPassword, $user->password)) {
+            if (Hash::check($oldPassword, $user->password)) {
                 $this->authService->changePassword($user, $newPassword);
-            }
-            else{
+            } else {
                 throw new Exception("Wrong old password");
             }
 
             return response()->json([
                 'message' => 'Password changed successfully'
             ]);
-        }
-        catch (Exception $e) {
+        } catch (Exception $e) {
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
 
 
-    public function getAllUsers(): JsonResponse {
+    public function getAllUsers(): JsonResponse
+    {
         return response()->json([
             'message' => 'Get all users',
             'users' => User::all()
-        ],201);
+        ], 201);
     }
 
 

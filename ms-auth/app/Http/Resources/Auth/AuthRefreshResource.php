@@ -11,6 +11,6 @@ class AuthRefreshResource
         return response()->json([
             'accessToken' => $accessToken,
             'message' => 'Access token refreshed successfully.',
-        ], 201)->withCookie($cookie);
+        ], 200)->withCookie($cookie);
     }
-} 
+}

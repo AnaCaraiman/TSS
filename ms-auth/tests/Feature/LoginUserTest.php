@@ -2,10 +2,10 @@
 
 namespace Tests\Feature\Auth;
 
+use Laravel\Sanctum\Sanctum;
 use Tests\TestCase;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Hash;
 
 class LoginUserTest extends TestCase
 {
@@ -27,10 +27,10 @@ class LoginUserTest extends TestCase
         );
 
         $response->assertJsonStructure([
-                     'message',
-                     'user',
-                     'accessToken',
-                 ]);
+            'message',
+            'user',
+            'accessToken',
+        ]);
     }
 
     public function test_login_fails_with_wrong_credentials()
@@ -45,8 +45,57 @@ class LoginUserTest extends TestCase
         ]);
 
         $response->assertStatus(401)
-                 ->assertJson([
-                     'message' => 'Wrong email or password.'
-                 ]);
+            ->assertJson([
+                'message' => 'Wrong email or password.'
+            ]);
+    }
+
+    public function test_user_can_logout_successfully()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+
+        $response = $this->postJson('/api/auth/logout');
+
+        $response->assertStatus(200)
+            ->assertJson([
+                'message' => 'User logged out successfully.'
+            ]);
+
+        $this->assertEmpty($user->tokens);
+    }
+
+    public function test_user_can_refresh_token()
+    {
+        $user = User::factory()->create();
+        $user->createToken('access_token');
+
+        Sanctum::actingAs($user);
+
+        $response = $this->postJson('/api/auth/refresh', [
+            'refreshToken' => 'test_value'
+        ]);
+
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'message',
+                'accessToken'
+            ]);
+    }
+
+    public function test_user_can_delete_account()
+    {
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum');
+
+        $response = $this->deleteJson('/api/auth/');
+
+        $response->assertStatus(201)
+            ->assertJson([
+                'message' => 'Account deleted successfully'
+            ]);
+
+        $this->assertDatabaseMissing('users', ['id' => $user->id]);
     }
 }
