@@ -24,7 +24,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         parent::setUp();
         $this->catalogService = new CatalogService();
-        
+
         // Setup sample products for testing
         $this->sampleProducts = collect([
             [
@@ -33,7 +33,8 @@ class CatalogServiceTest extends LaravelTestCase
                 'price' => 100,
                 'stock_quantity' => 5,
                 'category_id' => 1,
-                'created_at' => '2025-01-20'
+                'created_at' => '2025-01-20',
+                'brand' => 'Apple'
             ],
             [
                 'id' => 2,
@@ -41,7 +42,8 @@ class CatalogServiceTest extends LaravelTestCase
                 'price' => 1000,
                 'stock_quantity' => 0,
                 'category_id' => 1,
-                'created_at' => '2025-01-21'
+                'created_at' => '2025-01-21',
+                'brand' => 'Apple'
             ],
             [
                 'id' => 3,
@@ -49,7 +51,8 @@ class CatalogServiceTest extends LaravelTestCase
                 'price' => 200,
                 'stock_quantity' => 10,
                 'category_id' => 2,
-                'created_at' => '2025-01-22'
+                'created_at' => '2025-01-22',
+                'brand' => 'KitchenAid'
             ]
         ]);
 
@@ -63,7 +66,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['min_price' => 150]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(2, $filtered);
         $this->assertTrue($filtered->every(fn($product) => $product['price'] >= 150));
     }
@@ -73,7 +76,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['max_price' => 500]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(2, $filtered);
         $this->assertTrue($filtered->every(fn($product) => $product['price'] <= 500));
     }
@@ -86,7 +89,7 @@ class CatalogServiceTest extends LaravelTestCase
             'max_price' => 500
         ]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(1, $filtered);
         $this->assertEquals(200, $filtered->first()['price']);
     }
@@ -96,9 +99,10 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['name' => 'phone']);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(2, $filtered);
-        $this->assertTrue($filtered->every(fn($product) => 
+        $this->assertTrue($filtered->every(
+            fn($product) =>
             str_contains(strtolower($product['name']), 'phone')
         ));
     }
@@ -108,7 +112,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['in_stock' => true]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(2, $filtered);
         $this->assertTrue($filtered->every(fn($product) => $product['stock_quantity'] > 0));
     }
@@ -118,9 +122,19 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['category_id' => 1]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(2, $filtered);
         $this->assertTrue($filtered->every(fn($product) => $product['category_id'] === 1));
+    }
+
+    #[Test]
+    public function it_filters_by_brand()
+    {
+        $filters = $this->createFilters(['brand' => 'Apple']);
+        $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
+
+        $this->assertCount(2, $filtered);
+        $this->assertTrue($filtered->every(fn($product) => $product['brand'] === 'Apple'));
     }
 
     #[Test]
@@ -128,7 +142,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['sort_by' => ['price', 'asc']]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $prices = $filtered->pluck('price')->all();
         $this->assertEquals([100, 200, 1000], $prices);
     }
@@ -138,7 +152,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['sort_by' => ['price', 'desc']]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $prices = $filtered->pluck('price')->all();
         $this->assertEquals([1000, 200, 100], $prices);
     }
@@ -148,7 +162,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         $filters = $this->createFilters(['sort_by' => ['name', 'asc']]);
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertEquals('Cheap Phone', $filtered->first()['name']);
         $this->assertEquals('Kitchen Mixer', $filtered->last()['name']);
     }
@@ -163,9 +177,9 @@ class CatalogServiceTest extends LaravelTestCase
             'category_id' => 1,
             'sort_by' => ['price', 'desc']
         ]);
-        
+
         $filtered = $this->catalogService->filterProducts($this->sampleProducts, $filters);
-        
+
         $this->assertCount(1, $filtered);
         $this->assertEquals(100, $filtered->first()['price']);
         $this->assertEquals(1, $filtered->first()['category_id']);
@@ -196,6 +210,7 @@ class CatalogServiceTest extends LaravelTestCase
     {
         return array_merge([
             'name' => null,
+            'brand' => null,
             'category_id' => null,
             'min_price' => null,
             'max_price' => null,
