@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class PaymentController extends Controller
 {
@@ -27,12 +28,10 @@ class PaymentController extends Controller
             return response()->json([
                 'message' => 'Payment created successfully with id '.$paymentId,
             ],201);
-        }
-        catch (Exception $e) {
-            Log::info('error ' . $e->getMessage());
+        } catch (Exception $e) {
             return response()->json([
                 'message' => $e->getMessage(),
-            ],400);
+            ], 400);
         }
     }
 

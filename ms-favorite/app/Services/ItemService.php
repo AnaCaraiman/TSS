@@ -14,6 +14,10 @@ class ItemService
     {
     }
 
+    public function getFavoriteIdByUserId(?int $userId): ?int {
+        if (!$userId) return null;
+        return $this->favoriteRepository->getFavoriteCartId($userId);
+    }
     public function createItem(array $data): FavoriteItem {
         $data['favorite_id'] = $this->favoriteRepository->getFavoriteCartId($data['user_id']);
 

@@ -56,7 +56,7 @@ Route::prefix('favorite')->group(function () {
 });
 
 Route::prefix('recommendation')->group(function () {
-    Route::get('/', [RecommendationController::class, 'getRecommendedProducts']);
+    Route::get('/{id}', [RecommendationController::class, 'getRecommendedProducts']);
     Route::post('/',[RecommendationController::class,'addAction']);
 });
 

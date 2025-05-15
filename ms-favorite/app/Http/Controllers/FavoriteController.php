@@ -13,7 +13,7 @@ class FavoriteController
 
     public function createFavoriteCart(Request $request): JsonResponse {
         try {
-            $userId = FavoriteTransformer::transform($request->data())['user_id'];
+            $userId = FavoriteTransformer::transform($request->all())['user_id'];
 
             $favorite = $this->favoriteService->createFavorite($userId);
 
@@ -50,7 +50,7 @@ class FavoriteController
 
     public function deleteFavoriteCart(Request $request): JsonResponse {
         try {
-            $id = FavoriteTransformer::transform($request->data())['user_id'];
+            $id = FavoriteTransformer::transform($request->all())['user_id'];
 
             $this->favoriteService->deleteFavorite($id);
 

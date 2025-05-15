@@ -14,8 +14,16 @@ class FavoriteItemController
 
     public function addFavoriteItem(Request $request): JsonResponse {
         try{
-        $data = FavoriteItemTransformer::transform($request->data());
-        $item = $this->itemService->createItem($data);
+            $favoriteId = $this->itemService->getFavoriteIdByUserId($data['user_id'] ?? null);
+            if (!$favoriteId) {
+                throw new Exception('Favorite cart not found for user');
+            }
+
+            $data['favorite_id'] = $favoriteId;
+
+
+            $data = FavoriteItemTransformer::transform($request->all());
+            $item = $this->itemService->createItem($data);
 
         return response()->json([
             'message' => 'Item added to favorite list',
@@ -31,7 +39,7 @@ class FavoriteItemController
 
     public function removeFavoriteItem(Request $request): JsonResponse {
         try {
-            $this->itemService->deleteItem($request->data());
+            $this->itemService->deleteItem($request->all());
 
             return response()->json([
                 'message' => 'Item removed from favorite list'

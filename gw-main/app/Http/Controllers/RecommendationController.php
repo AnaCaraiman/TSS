@@ -17,12 +17,12 @@ class RecommendationController
 
     public function getRecommendedProducts(Request $request): JsonResponse {
         try {
-            $userId = $this->authController->getUserId($request);
+            $productId = $request->route('id');
 
-            $response = Http::get($this->recommendationServiceUrl . '/api/recommendation/'. $userId );
+            $response = Http::get($this->recommendationServiceUrl . '/api/recommendation/'. $productId );
 
             $data = json_decode($response->body(), true);
-            $recommendedIds = json_decode($data['recommended_products'], true); // Now this is an array
+            $recommendedIds = json_decode($data['recommended_products'], true);
 
             return $this->productController->getProductsByIds($recommendedIds);
         }

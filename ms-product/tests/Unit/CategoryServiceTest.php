@@ -12,7 +12,7 @@ use Tests\TestCase;
 class CategoryServiceTest extends TestCase
 {
     protected $categoryRepository;
-    protected $categoryService;
+    protected CategoryService $categoryService;
 
     protected function setUp(): void
     {
@@ -53,7 +53,9 @@ class CategoryServiceTest extends TestCase
         $this->categoryService->getCategoryById(999);
     }
 
-    /** @test */
+    /** @test
+     * @throws Exception
+     */
     public function it_creates_a_category_successfully()
     {
         Cache::shouldReceive('forget')->once();
@@ -87,7 +89,9 @@ class CategoryServiceTest extends TestCase
         $this->categoryService->createCategory(['name' => 'Test']);
     }
 
-    /** @test */
+    /** @test
+     * @throws Exception
+     */
     public function it_deletes_a_category_successfully()
     {
         Cache::shouldReceive('forget')->once();
