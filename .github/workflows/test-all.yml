@@ -20,7 +20,16 @@ jobs:
     strategy:
       matrix:
         service:
-          [ms-auth, ms-cart, ms-catalog, ms-order, ms-payment, ms-product]
+          [
+            ms-auth,
+            ms-cart,
+            ms-catalog,
+            ms-order,
+            ms-payment,
+            ms-product,
+            ms-recommendation,
+            ms-favorite,
+          ]
     continue-on-error: true
     services:
       rabbitmq:
