@@ -112,5 +112,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: infection-report-${{ matrix.service }}
-          path: ${{ matrix.service }}/infection-log.txt
+          path: |
+            ${{ matrix.service }}/infection-log.txt
             ${{ matrix.service }}/infection-summary.txt
