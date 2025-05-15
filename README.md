@@ -92,6 +92,52 @@ composer require --dev phpunit/phpunit mockery/mockery
 - Teste HTTP: Feature testing pentru API
 - PHPUnit config cu coverage activ
 
+  ## Scenarii de testare – aplicația PHP
+
+În cadrul aplicației PHP am realizat testare funcțională și structurală pe toate funcționalitățile implementate: coș, catalog, favorite, comenzi și autentificare.  Accent pe:
+
+- testare la nivel de servicii interne (unitară),
+- testare prin interfață API (funcțională),
+- acoperire structurală (statement, branch și condition coverage),
+- validare a fluxurilor reale și a cazurilor de eroare.
+
+### Exemplu detaliat: autentificare
+
+Pentru autentificare am detaliat testele atât la nivel funcțional, cât și structural. Acestea acoperă:
+
+- login reușit vs. eșuat,
+- înregistrare cu date valide vs. invalide,
+- ștergere cont, logout și generare de tokenuri,
+- testarea efectivă a metodelor din `AuthService`, `AuthController` și `TokenRepository`.
+
+#### Exemplu de test funcțional: login reușit
+
+```php
+public function test_user_can_login_successfully()
+{
+    $user = User::factory()->create([
+        'password' => bcrypt('secret123'),
+    ]);
+
+    $response = $this->postJson('/api/auth/login', [
+        'email' => $user->email,
+        'password' => 'secret123',
+    ]);
+
+    $this->assertTrue(
+        in_array($response->status(), [200, 201]),
+        'Response status is not 200 or 201'
+    );
+
+    $response->assertJsonStructure([
+        'message',
+        'user',
+        'accessToken',
+    ]);
+}
+```
+
+
 
 # 2. Testarea funcțională
 
