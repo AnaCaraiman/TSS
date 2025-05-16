@@ -1,4 +1,4 @@
-                            Raport AI
+Raport AI
 
 Scopul utilizării AI
 
@@ -10,7 +10,7 @@ Am folosit ChatGPT pentru a genera teste structurale (unit) și funcționale (fe
 Promptul folosit
 
 Write structural and functional tests for this service: 
-
+```php
 <?php
 
 namespace App\Services;
@@ -160,6 +160,7 @@ class CartItemService
     }
 
 }
+```
 
 Rezultat: Teste Generate
 
@@ -180,7 +181,7 @@ Goal:
 🛠 Create a Unit Test:
 
 tests/Unit/Services/CartItemServiceTest.php
-
+```php
 <?php
 
 namespace Tests\Unit\Services;
@@ -332,7 +333,7 @@ class CartItemServiceTest extends TestCase
     }
 
 }
-
+```
 ✨ Functional (Feature) tests
 
 Goal:
@@ -346,7 +347,7 @@ Route::post('/cart/update', [CartController::class, 'updateCart']);
  Create a Feature Test:
 
 tests/Feature/Cart/UpdateCartTest.php
-
+```
 <?php
 
 namespace Tests\Feature\Cart;
@@ -448,7 +449,7 @@ class UpdateCartTest extends TestCase
     }
 
 }
-
+```
 ⸻
 
 Summary:
