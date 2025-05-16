@@ -211,12 +211,12 @@ Analiza aplicată pe:
 
 ### Seturi de date:
 
-| Test | Input | Așteptare |
-|:---|:---|:---|
-| Password = 7 caractere | Eșec la înregistrare (400) |
-| Password = 8 caractere | Succes înregistrare (201) |
-| Email fără `@` | Eșec înregistrare (400) |
-| Quantity = 0 | Fallback / eroare la adăugare în coș |
+| Test                             | Input                                   | Așteptare                                  |
+|:----------------------------------|:-----------------------------------------|:--------------------------------------------|
+| Înregistrare cu parolă scurtă     | Password = `"abcdefg"` (7 caractere)     | Eșec la înregistrare (HTTP 400)             |
+| Înregistrare cu parolă validă     | Password = `"abcdefgh"` (8 caractere)    | Succes înregistrare (HTTP 201)              |
+| Înregistrare cu email invalid     | Email = `"exemplu.com"` (fără `@`)       | Eșec înregistrare (HTTP 400)                |
+| Adăugare în coș cu cantitate zero | Quantity = `0`                           | Eroare sau fallback la ștergere (HTTP 400)  |
 
 
 # 3. Testarea structurală
