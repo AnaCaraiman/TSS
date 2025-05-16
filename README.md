@@ -368,8 +368,7 @@ Mutation testing a fost integrat în pipeline-ul GitHub Actions, împreună cu a
 > ⚙️ Tool: [Infection PHP](https://infection.github.io/)  
 > 🧪 Status: Activ în CI/CD  
 > 📈 Rezultat:
-![WhatsApp Image 2025-05-16 at 00 15 52_7e2890d4](https://github.com/user-attachments/assets/fd3dea3d-dc7f-47df-b9ac-c987c978982d)
-
+[![Calculate Coverage](https://github.com/AnaCaraiman/TSS/actions/workflows/run-coverage-all.yml/badge.svg)](https://github.com/AnaCaraiman/TSS/actions/workflows/run-coverage-all.yml)
 
 
 # 7. Evaluarea unei platforme existente
