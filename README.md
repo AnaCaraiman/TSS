@@ -232,6 +232,34 @@ Fluxuri verificate explicit în testele unitare și funcționale:
 - Eliminare produs din coș
 - Operare invalidă fallback
 
+Pașii principali ai fluxului de autentificare, înregistrare și operațiuni pe coș
+
+![numbered_control_flow](https://github.com/user-attachments/assets/93cd54f4-dbfc-4de8-b373-11049106b4e9)
+
+## Legenda Pasi
+
+| Pas | Descriere                                            |
+|-----|------------------------------------------------------|
+| 1   | Start Login                                          |
+| 2   | Verificare email                                     |
+| 3   | Eroare: „Email invalid”                              |
+| 4   | Verificare parola                                    |
+| 5   | Eroare: „Wrong email or password”                    |
+| 6   | Login reusit                                         |
+| 7   | Start Inregistrare                                   |
+| 8   | Validare format date intrare                         |
+| 9   | Eroare: „Invalid input”                              |
+| 10  | Verificare email deja folosit                        |
+| 11  | Eroare: „User already exists”                        |
+| 12  | Creare utilizator & returnare token si user          |
+| 13  | Start operatiune cos                                 |
+| 14  | Determinare tip operatiune                           |
+| 15  | Adaugare produs (+)                                  |
+| 16  | Scădere cantitate (–)                                |
+| 17  | Indepartare articol (other)                          |
+| 18  | Returnare cos actualizat                             |
+| 19  | End                                                  |
+
 
 ## (b) Acoperire la nivel de instrucțiune (statement coverage)
 
@@ -309,35 +337,6 @@ Testele acoperă 4 drumuri independente:
 | **R9**  | *other*        | Elimină produs din coș → returnează `items`                | `test_invalid_operation_defaults_to_remove_item` | Verifică ștergerea produsului când operațiunea nu este validă. |
 
 ---
-
-## Graful fluxului de control
-Pașii principali ai fluxului de autentificare, înregistrare și operațiuni pe coș
-
-![numbered_control_flow](https://github.com/user-attachments/assets/93cd54f4-dbfc-4de8-b373-11049106b4e9)
-
-## Legenda Pasi
-
-| Pas | Descriere                                            |
-|-----|------------------------------------------------------|
-| 1   | Start Login                                          |
-| 2   | Verificare email                                     |
-| 3   | Eroare: „Email invalid”                              |
-| 4   | Verificare parola                                    |
-| 5   | Eroare: „Wrong email or password”                    |
-| 6   | Login reusit                                         |
-| 7   | Start Inregistrare                                   |
-| 8   | Validare format date intrare                         |
-| 9   | Eroare: „Invalid input”                              |
-| 10  | Verificare email deja folosit                        |
-| 11  | Eroare: „User already exists”                        |
-| 12  | Creare utilizator & returnare token si user          |
-| 13  | Start operatiune cos                                 |
-| 14  | Determinare tip operatiune                           |
-| 15  | Adaugare produs (+)                                  |
-| 16  | Scădere cantitate (–)                                |
-| 17  | Indepartare articol (other)                          |
-| 18  | Returnare cos actualizat                             |
-| 19  | End                                                  |
 
 # 4. Rezultate Coverage
 
