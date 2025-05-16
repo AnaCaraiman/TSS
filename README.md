@@ -396,5 +396,7 @@ Magento este o platformă open-source de e-commerce lansată în 2008. Este scri
 | **Extensibilitate**     | Foarte mare (module, teme, marketplace)       | Redusă, orientată pe învățare                   |
 | **Resurse necesare**    | Servere puternice, echipe specializate        | Resurse minime, poate rula local                |
 
+# 8. Demo
+[Video](https://www.youtube.com/watch?v=Ib6qX06aL_o&ab_channel=TrandafirAlexandru)
 
 
